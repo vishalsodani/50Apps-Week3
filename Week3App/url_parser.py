@@ -11,10 +11,10 @@ def parse(url):
     web_page = requests.get(url)
     webpage_content = BeautifulSoup(web_page.content)
     all_tags = webpage_content.findAll(text=True)
-    content = ''
-    for i in all_tags:
-        content += i
     
+    content =  map(lambda x: x,all_tags)
+    content = " ".join(content)
+   
     potential_words = filter (lambda x:re.match("^[a-zA-Z]+$",x),[x for x in re.split("[\s:/,.:]",content)])
     potential_words = filter(lambda x: x not in IGNORE_WORD_LIST,potential_words)
 
