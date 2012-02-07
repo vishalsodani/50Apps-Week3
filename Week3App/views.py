@@ -7,6 +7,6 @@ def home(request):
 
 def result(request):
     url = request.POST['url_input']
-    parse(url)
-    return render_to_response('result.html', {}, context_instance=RequestContext(request))
+    result = parse(url)
+    return render_to_response('result.html', {'result':result}, context_instance=RequestContext(request))
     
