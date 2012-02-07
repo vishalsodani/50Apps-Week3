@@ -10,15 +10,16 @@ RESULT_LIST = {}
 def parse(url):
     web_page = requests.get(url)
     webpage_content = BeautifulSoup(web_page.content)
+    all_tags = webpage_content.findAll(text=True)
     content = ''
-    for i in webpage_content.body:
-        if i.string:
-            content += i.string
+    for i in all_tags:
+        content += i
     
     potential_words = filter (lambda x:re.match("^[a-zA-Z]+$",x),[x for x in re.split("[\s:/,.:]",content)])
     potential_words = filter(lambda x: x not in IGNORE_WORD_LIST,potential_words)
 
     result = dict([(x, potential_words.count(x)) for x in potential_words])
+
     # covert into set so unique counts
     result_occurence = set([potential_words.count(x) for x in potential_words])
     # find legnth of set
