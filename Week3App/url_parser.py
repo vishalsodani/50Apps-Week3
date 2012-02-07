@@ -5,7 +5,7 @@ import re
 
 IGNORE_WORD_LIST = ['a', 'an', 'the', 'on', 'in', 'for', 'and','to','it','of']
 MAX_WORD_LIST = 10
-RESULT_LIST = {}
+
 
 def parse(url):
     web_page = requests.get(url)
@@ -29,20 +29,21 @@ def parse(url):
     max_ocuurence = result_list[len_set -1]
 
     # now go though each element in dictionary which is equal to max_ocuurence, reverse till 1, max words to pick is 10
-    
-    fetch_words_with_max_occurence(result, max_ocuurence)
-    return RESULT_LIST
+    result_list = {}
+    fetch_words_with_max_occurence(result, max_ocuurence, result_list)
 
-def fetch_words_with_max_occurence(result, max_ocuurence):
+    return result_list    
+
+def fetch_words_with_max_occurence(result, max_ocuurence,result_list):
     
-    if len(RESULT_LIST) == MAX_WORD_LIST:
+    if len(result_list) == MAX_WORD_LIST:
         return
 
     for k,v in result.iteritems():
         if v == max_ocuurence:
-            RESULT_LIST[k] = v
-            if len(RESULT_LIST) == MAX_WORD_LIST:
+            result_list[k] = v
+            if len(result_list) == MAX_WORD_LIST:
                 return
             
             
-    fetch_words_with_max_occurence(result, max_ocuurence - 1)
+    fetch_words_with_max_occurence(result, max_ocuurence - 1,result_list)
