@@ -1,6 +1,7 @@
 import requests
-from BeautifulSoup import BeautifulSoup
+from BeautifulSoup import BeautifulSoup, Comment
 import re
+
 
 
 IGNORE_WORD_LIST = ['a', 'an', 'the', 'on', 'in', 'for', 'and','to','it','of']
@@ -10,13 +11,22 @@ MAX_WORD_LIST = 10
 def parse(url):
     web_page = requests.get(url)
     webpage_content = BeautifulSoup(web_page.content)
-    all_tags = webpage_content.findAll(text=True)
     
+    
+    map(lambda tag: tag.extract(),webpage_content.findAll({'script':True}))
+    map(lambda tag: tag.extract(),webpage_content.findAll(text=lambda x: isinstance(x, Comment)))
+
+    
+    all_tags = webpage_content.findAll(text=True)
     content =  map(lambda x: x,all_tags)
     content = " ".join(content)
-   
+    content = re.sub(r'&.+;','',content)
+    content = re.sub(r'\r\n|\n|\\|/',' ',content)
+
+    #return result_list
     potential_words = filter (lambda x:re.match("^[a-zA-Z]+$",x),[x for x in re.split("[\s:/,.:]",content)])
     potential_words = filter(lambda x: x not in IGNORE_WORD_LIST,potential_words)
+    potential_words = map(lambda x : x.lower(),potential_words)
 
     result = dict([(x, potential_words.count(x)) for x in potential_words])
 
